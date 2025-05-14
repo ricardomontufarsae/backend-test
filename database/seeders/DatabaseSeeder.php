@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
         Producto::create([
             'user_id' => $user->id,
             'categoria_id' => $deporte->id,
-            'nombre' => 'Balón de fútbol',
+            'nombre' => 'Balon de fútbol',
             'descripcion' => 'Balón profesional tamaño 5, ideal para partidos.',
             'precio' => 29.99,
             'stock' => 15,
@@ -76,7 +76,7 @@ class DatabaseSeeder extends Seeder
         Producto::create([
             'user_id' => $user->id,
             'categoria_id' => $hogar->id,
-            'nombre' => 'Lámpara de mesa',
+            'nombre' => 'Lampara de mesa',
             'descripcion' => 'Lámpara LED moderna con intensidad regulable.',
             'precio' => 34.50,
             'stock' => 8,
@@ -87,7 +87,7 @@ class DatabaseSeeder extends Seeder
         Producto::create([
             'user_id' => $user->id,
             'categoria_id' => $hogar->id,
-            'nombre' => 'Sábanas de algodón',
+            'nombre' => 'Sabanas de algodón',
             'descripcion' => 'Juego de sábanas 100% algodón, tamaño queen.',
             'precio' => 59.90,
             'stock' => 12,

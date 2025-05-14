@@ -20,7 +20,6 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/logout', 'logout');
 });
 
-
 Route::middleware('auth:api')->group(function () {
     Route::controller(\App\Http\Controllers\ProductoController::class)->group(function () {
         Route::get('/productos', 'index');

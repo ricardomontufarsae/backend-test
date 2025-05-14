@@ -26,14 +26,6 @@ class CategoriaController extends Controller
     public function store(Request $request){
 
         try{
-            $user = Auth::user();
-
-            $producto = Producto::where('user_id', $user->id)->findOrFail($id);
-            $producto->delete();
-
-            return response()->json([
-                'message' => 'Producto eliminado correctamente.'
-            ]);
             $request->validate([
                 'nombre' => 'required|string|unique:categorias',
                 'descripcion' => 'required|string',
@@ -57,7 +49,7 @@ class CategoriaController extends Controller
 
         }catch (\Exception $e) {
             return response()->json([
-                'message' => 'Error al cear la categoria.',
+                'message' => 'Error al crear la categoria.',
                 'error' => $e->getMessage()
             ], 500);
         }
