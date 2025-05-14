@@ -28,4 +28,11 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/productos/{id}', 'update');
         Route::delete('/productos/{id}', 'destroy');
     });
+
+    Route::controller(\App\Http\Controllers\CategoriaController::class)->group(function (){
+       Route::get('/categorias', 'index');
+       Route::post('/categorias', 'store');
+       Route::put('/categorias/{id}', 'update');
+       Route::delete('/categorias/{id}', 'destroy');
+    });
 });

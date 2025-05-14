@@ -15,11 +15,17 @@ class Producto extends Model
         'descripcion',
         'precio',
         'stock',
-        'codigo'
+        'codigo',
+        'fecha_ingreso',
+        'categoria_id'
     ];
 
     public function user(){
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function categoria(){
+        return $this->belongsTo(Categoria::class, 'categoria_id');
     }
 
 }
