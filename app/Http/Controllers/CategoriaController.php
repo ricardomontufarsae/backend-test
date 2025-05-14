@@ -24,59 +24,92 @@ class CategoriaController extends Controller
 
 
     public function store(Request $request){
-        $request->validate([
-            'nombre' => 'required|string|unique:categorias',
-            'descripcion' => 'required|string',
-            'codigo' => 'required|string|unique:categorias'
-        ]);
 
-        $user = Auth::user();
+        try{
+            $user = Auth::user();
 
-        $categoria = Categoria::create([
-            'user_id' => $user->id,
-            'nombre' => $request->nombre,
-            'descripcion' => $request->descripcion,
-            'codigo' => $request->codigo
-        ]);
+            $producto = Producto::where('user_id', $user->id)->findOrFail($id);
+            $producto->delete();
+
+            return response()->json([
+                'message' => 'Producto eliminado correctamente.'
+            ]);
+            $request->validate([
+                'nombre' => 'required|string|unique:categorias',
+                'descripcion' => 'required|string',
+                'codigo' => 'required|string|unique:categorias'
+            ]);
+
+            $user = Auth::user();
+
+            $categoria = Categoria::create([
+                'user_id' => $user->id,
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+                'codigo' => $request->codigo
+            ]);
 
 
-        return response()->json([
-            'message' => 'Categoria creada correctamente',
-            'categoria' => $categoria
-        ]);
+            return response()->json([
+                'message' => 'Categoria creada correctamente',
+                'categoria' => $categoria
+            ]);
+
+        }catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al cear la categoria.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
 
     }
 
     public function update(Request $request, $id){
-        $user = Auth::user();
-        $categoria = Categoria::where('user_id', $user->id)->findOrFail($id);
+        try{
+            $user = Auth::user();
+            $categoria = Categoria::where('user_id', $user->id)->findOrFail($id);
 
-        $request->validate([
-            'nombre' => 'required|string|unique:categorias',
-            'descripcion' => 'required|string',
-            'codigo' => 'required|string|unique:categorias,codigo' . $categoria->id,
-        ]);
+            $request->validate([
+                'nombre' => 'required|string|unique:categorias',
+                'descripcion' => 'required|string',
+                'codigo' => 'required|string|unique:categorias,codigo' . $categoria->id,
+            ]);
 
-        $categoria->update([
-            'nombre' => $request->nombre,
-            'descripcion' => $request->descripcion,
-            'codigo' => $request->codigo
-        ]);
+            $categoria->update([
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+                'codigo' => $request->codigo
+            ]);
 
-        return response()->json([
-            'message' => 'Categoria actualizada correctamente',
-            'categoria' => $categoria
-        ]);
+            return response()->json([
+                'message' => 'Categoria actualizada correctamente',
+                'categoria' => $categoria
+            ]);
+
+        }catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al editar la categoria.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function destroy($id){
-        $user = Auth::user();
+        try{
+            $user = Auth::user();
 
-        $categoria = Categoria::where('user_id', $user->id)->findOrFail($id);
-        $categoria->delete();
+            $categoria = Categoria::where('user_id', $user->id)->findOrFail($id);
+            $categoria->delete();
 
-        return response()->json([
-            'message' => 'Categoria eliminada correctamente.'
-        ]);
+            return response()->json([
+                'message' => 'Categoria eliminada correctamente.'
+            ]);
+        }catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al eliminar la categoria.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
     }
 }

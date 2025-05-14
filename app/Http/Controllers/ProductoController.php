@@ -29,87 +29,111 @@ class ProductoController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'precio' => 'required|numeric',
-            'stock' => 'required|integer',
-            'codigo' => 'required|string|max:50|unique:productos,codigo',
-            'fecha_ingreso' => 'nullable|date',
-            'categoria_id' => 'nullable|exists:categorias,id',
-        ]);
+        try {
+            $request->validate([
+                'nombre' => 'required|string|max:255',
+                'descripcion' => 'nullable|string',
+                'precio' => 'required|numeric',
+                'stock' => 'required|integer',
+                'codigo' => 'required|string|max:50|unique:productos,codigo',
+                'fecha_ingreso' => 'nullable|date',
+                'categoria_id' => 'nullable|exists:categorias,id',
+            ]);
 
-        $user = Auth::user();
+            $user = Auth::user();
 
-        if ($request->categoria_id) {
-            $categoriaValida = Categoria::where('id', $request->categoria_id)
-                ->where('user_id', $user->id)
-                ->exists();
+            if ($request->categoria_id) {
+                $categoriaValida = Categoria::where('id', $request->categoria_id)
+                    ->where('user_id', $user->id)
+                    ->exists();
 
-            if (!$categoriaValida) {
-                return response()->json(['message' => 'Categoría inválida'], 403);
+                if (!$categoriaValida) {
+                    return response()->json(['message' => 'Categoría inválida'], 403);
+                }
             }
+
+            $producto = Producto::create([
+                'user_id' => $user->id,
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+                'precio' => $request->precio,
+                'stock' => $request->stock,
+                'codigo' => $request->codigo,
+                'fecha_ingreso' => $request->fecha_ingreso,
+                'categoria_id' => $request->categoria_id,
+            ]);
+
+            return response()->json([
+                'message' => 'Producto creado correctamente.',
+                'producto' => $producto
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al crear el producto.',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $producto = Producto::create([
-            'user_id' => $user->id,
-            'nombre' => $request->nombre,
-            'descripcion' => $request->descripcion,
-            'precio' => $request->precio,
-            'stock' => $request->stock,
-            'codigo' => $request->codigo,
-            'fecha_ingreso' => $request->fecha_ingreso,
-            'categoria_id' => $request->categoria_id,
-        ]);
-
-        return response()->json([
-            'message' => 'Producto creado correctamente.',
-            'producto' => $producto
-        ], 201);
     }
 
     public function update(Request $request, $id)
     {
-        $user = Auth::user();
+        try{
+            $user = Auth::user();
 
-        $producto = Producto::where('user_id', $user->id)->findOrFail($id);
+            $producto = Producto::where('user_id', $user->id)->findOrFail($id);
 
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'precio' => 'required|numeric',
-            'stock' => 'required|integer',
-            'codigo' => 'required|string|max:50|unique:productos,codigo,' . $producto->id,
-            'fecha_ingreso' => 'nullable|date',
-            'categoria_id' => 'nullable|exists:categorias,id',
-        ]);
+            $request->validate([
+                'nombre' => 'required|string|max:255',
+                'descripcion' => 'nullable|string',
+                'precio' => 'required|numeric',
+                'stock' => 'required|integer',
+                'codigo' => 'required|string|max:50|unique:productos,codigo,' . $producto->id,
+                'fecha_ingreso' => 'nullable|date',
+                'categoria_id' => 'nullable|exists:categorias,id',
+            ]);
 
-        $producto->update([
-            'nombre' => $request->nombre,
-            'descripcion' => $request->descripcion,
-            'precio' => $request->precio,
-            'stock' => $request->stock,
-            'codigo' => $request->codigo,
-            'fecha_ingreso' => $request->fecha_ingreso,
-            'categoria_id' => $request->categoria_id
-        ]);
+            $producto->update([
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+                'precio' => $request->precio,
+                'stock' => $request->stock,
+                'codigo' => $request->codigo,
+                'fecha_ingreso' => $request->fecha_ingreso,
+                'categoria_id' => $request->categoria_id
+            ]);
 
-        return response()->json([
-            'message' => 'Producto actualizado correctamente.',
-            'producto' => $producto
-        ]);
+            return response()->json([
+                'message' => 'Producto actualizado correctamente.',
+                'producto' => $producto
+            ]);
+        }catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al editar el producto.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
     }
 
     public function destroy($id)
     {
-        $user = Auth::user();
+        try{
+            $user = Auth::user();
 
-        $producto = Producto::where('user_id', $user->id)->findOrFail($id);
-        $producto->delete();
+            $producto = Producto::where('user_id', $user->id)->findOrFail($id);
+            $producto->delete();
 
-        return response()->json([
-            'message' => 'Producto eliminado correctamente.'
-        ]);
+            return response()->json([
+                'message' => 'Producto eliminado correctamente.'
+            ]);
+        }catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al eliminar el producto.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
     }
 
 

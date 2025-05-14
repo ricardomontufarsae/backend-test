@@ -59,36 +59,42 @@ class AuthController extends Controller
     }
 
     public function register(Request $request) {
+        try{
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:6|confirmed',
+            ], [
+                'name.required' => 'El nombre es requerido',
+                'name.string' => 'El nombre debe ser un texto',
+                'email.required' => 'El correo electronico es requerido',
+                'email.email' => 'El correo electronico debe ser una direccion de correo valida',
+                'password.required' => 'La contraseña es requerida'
+            ]);
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-        ], [
-            'name.required' => 'El nombre es requerido',
-            'name.string' => 'El nombre debe ser un texto',
-            'email.required' => 'El correo electronico es requerido',
-            'email.email' => 'El correo electronico debe ser una direccion de correo valida',
-            'password.required' => 'La contraseña es requerida'
-        ]);
+            $user = User::create([
+                'name' => $request['name'],
+                'email' => $request['email'],
+                'password' => Hash::make($request['password']),
+            ]);
 
-        $user = User::create([
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'password' => Hash::make($request['password']),
-        ]);
+            $token = Auth::login($user);
 
-        $token = Auth::login($user);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Usuario creado correctamente',
+                'user' => $user,
+                'authorisation' => [
+                    'token' => $token,
+                    'token_type' => 'bearer',
+                ]
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['message' => 'Error de validación', 'errors' => $e->validator->errors()], 400);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al iniciar sesión', 'error' => $e->getMessage()], 500);
+        }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Usuario creado correctamente',
-            'user' => $user,
-            'authorisation' => [
-                'token' => $token,
-                'token_type' => 'bearer',
-            ]
-        ]);
     }
     public function logout() {
         Auth::logout();
