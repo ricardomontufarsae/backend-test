@@ -19,7 +19,7 @@ class ProductoController extends Controller
     {
         $user = Auth::user();
 
-        $productos = Producto::with(['categoria:id,nombre']) 
+        $productos = Producto::with(['categoria:id,nombre'])
         ->where('user_id', $user->id)
             ->get();
 
