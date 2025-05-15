@@ -79,7 +79,7 @@ class ProductoController extends Controller
                 'descripcion' => 'nullable|string',
                 'precio' => 'required|numeric',
                 'stock' => 'required|integer',
-                'codigo' => 'required|string|max:50',
+                'codigo' => 'required|string|max:50|unique:productos,codigo,'.$producto->id,
                 'fecha_ingreso' => 'nullable|date',
                 'categoria_id' => 'nullable|exists:categorias,_id',
             ]);
@@ -112,7 +112,7 @@ class ProductoController extends Controller
         try{
             $user = Auth::user();
 
-            $producto = Producto::where('user_id', $user->id)->findOrFail($id);
+            $producto = Producto::where('user_id', $user->_id)->findOrFail($id);
             $producto->delete();
 
             return response()->json([

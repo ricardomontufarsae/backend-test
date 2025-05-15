@@ -34,4 +34,11 @@ Route::middleware('auth:api')->group(function () {
        Route::put('/categorias/{id}', 'update');
        Route::delete('/categorias/{id}', 'destroy');
     });
+
+    Route::controller(\App\Http\Controllers\FacturaController::class)->group(function () {
+        Route::get('/facturas', 'index');
+        Route::post('/facturas', 'store');
+        Route::put('/facturas/{id}', 'update');
+        Route::delete('/facturas/{id}', 'destroy');
+    });
 });

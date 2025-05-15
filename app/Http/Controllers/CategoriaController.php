@@ -29,7 +29,7 @@ class CategoriaController extends Controller
             $request->validate([
                 'nombre' => 'required|string|unique:categorias',
                 'descripcion' => 'required|string',
-                'codigo' => 'required|string|unique:categorias'
+                'codigo' => 'required|string|unique:categorias,codigo'
             ]);
 
             $user = Auth::user();
@@ -64,7 +64,7 @@ class CategoriaController extends Controller
             $request->validate([
                 'nombre' => 'required|string|unique:categorias',
                 'descripcion' => 'required|string',
-                'codigo' => 'required|string',
+                'codigo' => 'required|string|unique:categorias,codigo',
             ]);
 
             $categoria->update([

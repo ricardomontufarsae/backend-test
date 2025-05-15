@@ -21,6 +21,10 @@ class Producto extends Eloquent
         'categoria_id'
     ];
 
+    protected $casts = [
+        'fecha_ingreso' => 'datetime',
+    ];
+
     public function user(){
         return $this->belongsTo(User::class, 'user_id');
     }
