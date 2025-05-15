@@ -59,12 +59,12 @@ class CategoriaController extends Controller
     public function update(Request $request, $id){
         try{
             $user = Auth::user();
-            $categoria = Categoria::where('user_id', $user->id)->findOrFail($id);
+            $categoria = Categoria::where('user_id', $user->_id)->findOrFail($id);
 
             $request->validate([
                 'nombre' => 'required|string|unique:categorias',
                 'descripcion' => 'required|string',
-                'codigo' => 'required|string|unique:categorias,codigo' . $categoria->id,
+                'codigo' => 'required|string',
             ]);
 
             $categoria->update([
@@ -90,7 +90,7 @@ class CategoriaController extends Controller
         try{
             $user = Auth::user();
 
-            $categoria = Categoria::where('user_id', $user->id)->findOrFail($id);
+            $categoria = Categoria::where('user_id', $user->_id)->findOrFail($id);
             $categoria->delete();
 
             return response()->json([

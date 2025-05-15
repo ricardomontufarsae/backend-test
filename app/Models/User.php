@@ -4,7 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Jenssegers\Mongodb\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
@@ -18,6 +18,8 @@ class User extends Authenticatable implements JWTSubject
      *
      * @var array<int, string>
      */
+
+    protected $connection = 'mongodb';
     protected $fillable = [
         'name',
         'email',
@@ -66,6 +68,11 @@ class User extends Authenticatable implements JWTSubject
     public function producto()
     {
         return $this->hasMany(Producto::class);
+    }
+
+    public function factura()
+    {
+        return $this->hasMany(Factura::class);
     }
 
     public function categoria(){

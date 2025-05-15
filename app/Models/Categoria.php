@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
-class Categoria extends Model
+class Categoria extends Eloquent
 {
     use HasFactory;
 
+    protected $connection = 'mongodb';
     protected $fillable = [
         'user_id',
         'nombre',
@@ -16,7 +17,7 @@ class Categoria extends Model
         'codigo'
     ];
 
-    public function productos(){
+    public function producto(){
         return $this->hasMany(Producto::class);
     }
 

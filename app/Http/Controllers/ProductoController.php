@@ -37,20 +37,11 @@ class ProductoController extends Controller
                 'stock' => 'required|integer',
                 'codigo' => 'required|string|max:50|unique:productos,codigo',
                 'fecha_ingreso' => 'nullable|date',
-                'categoria_id' => 'nullable|exists:categorias,id',
+                'categoria_id' => 'nullable|exists:categorias,_id',
             ]);
 
             $user = Auth::user();
 
-            if ($request->categoria_id) {
-                $categoriaValida = Categoria::where('id', $request->categoria_id)
-                    ->where('user_id', $user->id)
-                    ->exists();
-
-                if (!$categoriaValida) {
-                    return response()->json(['message' => 'Categoría inválida'], 403);
-                }
-            }
 
             $producto = Producto::create([
                 'user_id' => $user->id,
@@ -81,16 +72,16 @@ class ProductoController extends Controller
         try{
             $user = Auth::user();
 
-            $producto = Producto::where('user_id', $user->id)->findOrFail($id);
+            $producto = Producto::where('user_id', $user->_id)->findOrFail($id);
 
             $request->validate([
                 'nombre' => 'required|string|max:255',
                 'descripcion' => 'nullable|string',
                 'precio' => 'required|numeric',
                 'stock' => 'required|integer',
-                'codigo' => 'required|string|max:50|unique:productos,codigo,' . $producto->id,
+                'codigo' => 'required|string|max:50',
                 'fecha_ingreso' => 'nullable|date',
-                'categoria_id' => 'nullable|exists:categorias,id',
+                'categoria_id' => 'nullable|exists:categorias,_id',
             ]);
 
             $producto->update([
