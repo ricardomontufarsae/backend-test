@@ -79,7 +79,7 @@ class ProductoController extends Controller
                 'descripcion' => 'nullable|string',
                 'precio' => 'required|numeric',
                 'stock' => 'required|integer',
-                'codigo' => 'required|string|max:50|unique:productos,codigo,'.$producto->id,
+                'codigo' => 'required|string|max:50',
                 'fecha_ingreso' => 'nullable|date',
                 'categoria_id' => 'nullable|exists:categorias,_id',
             ]);

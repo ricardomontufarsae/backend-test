@@ -64,7 +64,7 @@ class CategoriaController extends Controller
             $request->validate([
                 'nombre' => 'required|string|unique:categorias',
                 'descripcion' => 'required|string',
-                'codigo' => 'required|string|unique:categorias,codigo',
+                'codigo' => 'required|string',
             ]);
 
             $categoria->update([
