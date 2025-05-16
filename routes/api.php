@@ -40,5 +40,8 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/facturas', 'store');
         Route::put('/facturas/{id}', 'update');
         Route::delete('/facturas/{id}', 'destroy');
+        Route::get('/facturas/productos-facturados', 'productosFacturados');
+        Route::get('/facturas/numfac/{facturaNum}', 'show');
+
     });
 });

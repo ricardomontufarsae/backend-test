@@ -43,23 +43,11 @@ class FacturaController extends Controller
             $monto_total = 0;
 
             foreach ($request->productos as $item) {
-                try {
-                    $prodId = new ObjectId($item['producto_id']);
-                } catch (\Exception $e) {
-                    throw ValidationException::withMessages([
-                        'productos' => ['ID de producto invalido.']
-                    ]);
-                }
+                $prodId = new ObjectId($item['producto_id']);
 
                 $producto = Producto::where('_id', $prodId)
                     ->where('user_id', $user->_id)
                     ->first();
-
-                if (!$producto) {
-                    throw ValidationException::withMessages([
-                        'productos' => ['El producto no existe o no pertenece al usuario.']
-                    ]);
-                }
 
                 $subtotal = $item['cantidad'] * $item['precio_unitario'];
                 $monto_total += $subtotal;
@@ -109,9 +97,6 @@ class FacturaController extends Controller
                 ->where('user_id', $user->_id)
                 ->first();
 
-            if (!$factura) {
-                return response()->json(['message' => 'Factura no encontrada o no pertenece al usuario.'], 404);
-            }
 
             $request->validate([
                 'emisor' => 'required|string',
@@ -128,13 +113,7 @@ class FacturaController extends Controller
             $monto_total = 0;
 
             foreach ($request->productos as $item) {
-                try {
-                    $prodId = new ObjectId($item['producto_id']);
-                } catch (\Exception $e) {
-                    throw ValidationException::withMessages([
-                        'productos' => ['ID de producto invalido.']
-                    ]);
-                }
+                $prodId = new ObjectId($item['producto_id']);
 
                 $producto = Producto::where('_id', $prodId)
                     ->where('user_id', $user->_id)
@@ -198,4 +177,51 @@ class FacturaController extends Controller
         }
 
     }
+
+    public function productosFacturados()
+    {
+        $user = Auth::user();
+
+        $facturas = Factura::where('user_id', $user->_id)->get();
+
+        $productosFacturados = [];
+
+        foreach ($facturas as $factura) {
+            foreach ($factura->productos as $producto) {
+                $productosFacturados[] = [
+                    'nombre' => $producto['nombre'],
+                    'numero_factura' => $factura->numero_factura,
+                    'fecha_factura' => $factura->fecha_factura,
+                    'precio_total' => $producto['cantidad'] * $producto['precio_unitario']
+                ];
+            }
+        }
+
+        return response()->json($productosFacturados);
+    }
+
+    public function show($facturaNum)
+    {
+        try {
+            $user = Auth::user();
+
+            $factura = Factura::where('numero_factura', $facturaNum)
+                ->where('user_id', $user->_id)
+                ->first();
+
+            if (!$factura) {
+                return response()->json(['message' => 'Factura no encontrada.'], 404);
+            }
+
+            return response()->json($factura);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al obtener la factura.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
 }
