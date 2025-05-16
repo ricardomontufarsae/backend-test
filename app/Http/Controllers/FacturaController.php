@@ -49,12 +49,15 @@ class FacturaController extends Controller
                     ->where('user_id', $user->_id)
                     ->first();
 
+                $categoria = $producto->categoria;
+
                 $subtotal = $item['cantidad'] * $item['precio_unitario'];
                 $monto_total += $subtotal;
 
                 $productosDetalle[] = [
                     'producto_id' => $item['producto_id'],
                     'nombre' => $producto->nombre,
+                    'categoria_producto' => $categoria ? $categoria->nombre : 'Sin categoría',
                     'cantidad' => $item['cantidad'],
                     'precio_unitario' => $item['precio_unitario'],
                     'subtotal' => $subtotal,
@@ -119,6 +122,8 @@ class FacturaController extends Controller
                     ->where('user_id', $user->_id)
                     ->first();
 
+                $categoria = $producto->categoria;
+
                 if (!$producto) {
                     throw ValidationException::withMessages([
                         'productos' => ['El producto no existe o no pertenece al usuario.']
@@ -131,6 +136,7 @@ class FacturaController extends Controller
                 $productosDetalle[] = [
                     'producto_id' => $item['producto_id'],
                     'nombre' => $producto->nombre,
+                    'categoria_producto' => $categoria ? $categoria->nombre : 'Sin categoría',
                     'cantidad' => $item['cantidad'],
                     'precio_unitario' => $item['precio_unitario'],
                     'subtotal' => $subtotal,
@@ -190,6 +196,7 @@ class FacturaController extends Controller
             foreach ($factura->productos as $producto) {
                 $productosFacturados[] = [
                     'nombre' => $producto['nombre'],
+                    'categoria_producto' => $producto['categoria_producto'],
                     'numero_factura' => $factura->numero_factura,
                     'fecha_factura' => $factura->fecha_factura,
                     'precio_total' => $producto['cantidad'] * $producto['precio_unitario']
